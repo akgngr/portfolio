@@ -1,13 +1,13 @@
 {
 	"main": "dist/_worker.js/index.js",
-	"name": "deeply-disk",
+	"name": "portfolio",
   "compatibility_date": "2026-01-22",
   "compatibility_flags": [
     "nodejs_compat",
     "global_fetch_strictly_public"
   ],
 	"assets": {
-		"binding": "ASSETS",
+		"binding": "R2_ASSETS",
 		"directory": "./dist"
 	},
 	"observability": {
