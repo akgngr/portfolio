@@ -1,29 +1,42 @@
 ---
-import { db, Projects } from 'astro:db';
+type Project = {
+  id: number;
+  title: string;
+  description: string;
+  imageUrl: string;
+  publishedAt: string;
+};
 
-// Server-side logic to handle project creation
+const d1 = Astro.locals.runtime?.env?.DB;
+
+if (!d1) {
+  return new Response('Missing D1 binding: env.DB', { status: 500 });
+}
+
 if (Astro.request.method === 'POST') {
-  try {
-    const formData = await Astro.request.formData();
-    const title = formData.get('title') as string;
-    const description = formData.get('description') as string;
-    const imageUrl = formData.get('imageUrl') as string;
-    
-    if (title && imageUrl) {
-        await db.insert(Projects).values({
-            title,
-            description,
-            imageUrl,
-            publishedAt: new Date()
-        });
-    }
-  } catch (e) {
-    console.error('Error saving project:', e);
+  const formData = await Astro.request.formData();
+  const title = String(formData.get('title') ?? '').trim();
+  const description = String(formData.get('description') ?? '').trim();
+  const imageUrl = String(formData.get('imageUrl') ?? '').trim();
+  const publishedAt = new Date().toISOString();
+
+  if (title.length > 0 && imageUrl.length > 0) {
+    await d1
+      .prepare(
+        'INSERT INTO Projects (title, description, imageUrl, publishedAt) VALUES (?1, ?2, ?3, ?4)'
+      )
+      .bind(title, description, imageUrl, publishedAt)
+      .run();
+
+    return Astro.redirect('/admin');
   }
 }
 
-// Fetch existing projects for list view
-const projects = await db.select().from(Projects);
+const { results } = await d1
+  .prepare('SELECT id, title, description, imageUrl, publishedAt FROM Projects ORDER BY publishedAt DESC')
+  .all<Project>();
+
+const projects = results ?? [];
 ---
 
 <html lang="en">
@@ -109,58 +122,60 @@ const projects = await db.select().from(Projects);
             </div>
 		</main>
 
-        <script>
-            // Client-side logic for image upload
-            const fileInput = document.getElementById('fileInput') as HTMLInputElement;
-            const uploadBtn = document.getElementById('uploadBtn');
-            const dropZone = document.getElementById('dropZone');
-            const imageUrlInput = document.getElementById('imageUrl') as HTMLInputElement;
-            const imagePreview = document.getElementById('imagePreview');
-            const uploadText = document.getElementById('uploadText');
+		<script type="module">
+      const fileInput = document.getElementById('fileInput');
+      const uploadBtn = document.getElementById('uploadBtn');
+      const imageUrlInput = document.getElementById('imageUrl');
+      const imagePreview = document.getElementById('imagePreview');
+      const uploadText = document.getElementById('uploadText');
 
-            uploadBtn?.addEventListener('click', () => fileInput.click());
+      if (!(fileInput instanceof HTMLInputElement)) return;
+      if (!(imageUrlInput instanceof HTMLInputElement)) return;
+      if (!(uploadBtn instanceof HTMLButtonElement)) return;
+      if (!(uploadText instanceof HTMLElement)) return;
+      if (!(imagePreview instanceof HTMLElement)) return;
 
-            fileInput.addEventListener('change', async (e) => {
-                const file = (e.target as HTMLInputElement).files?.[0];
-                if (!file) return;
+      uploadBtn.addEventListener('click', () => fileInput.click());
 
-                await handleUpload(file);
-            });
+      fileInput.addEventListener('change', async () => {
+        const file = fileInput.files && fileInput.files[0];
+        if (!file) return;
+        await handleUpload(file);
+      });
 
-            async function handleUpload(file: File) {
-                if (!uploadText || !imagePreview) return;
-                
-                uploadText.textContent = 'Uploading...';
-                
-                const formData = new FormData();
-                formData.append('file', file);
-                formData.append('filename', `${Date.now()}-${file.name}`);
+      async function handleUpload(file) {
+        uploadText.textContent = 'Uploading...';
 
-                try {
-                    const response = await fetch('/api/upload', {
-                        method: 'POST',
-                        body: formData
-                    });
-                    
-                    const data = await response.json();
-                    
-                    if (data.success && data.url) {
-                        imageUrlInput.value = data.url;
-                        const img = imagePreview.querySelector('img');
-                        if (img) img.src = data.url; // In dev this might fail if R2 URL is not public/mocked
-                        // For demo purpose, if URL is placeholder, maybe show local blob?
-                        // img.src = URL.createObjectURL(file); 
-                        
-                        imagePreview.classList.remove('hidden');
-                        uploadText.textContent = 'Upload complete';
-                    } else {
-                        uploadText.textContent = 'Upload failed: ' + (data.error || 'Unknown error');
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    uploadText.textContent = 'Upload error';
-                }
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('filename', `${Date.now()}-${file.name}`);
+
+        try {
+          const response = await fetch('/api/upload', {
+            method: 'POST',
+            body: formData,
+          });
+
+          const data = await response.json();
+
+          if (data && data.success && data.url) {
+            imageUrlInput.value = data.url;
+
+            const img = imagePreview.querySelector('img');
+            if (img instanceof HTMLImageElement) {
+              img.src = data.url;
             }
-        </script>
+
+            imagePreview.classList.remove('hidden');
+            uploadText.textContent = 'Upload complete';
+          } else {
+            uploadText.textContent = `Upload failed: ${data?.error ?? 'Unknown error'}`;
+          }
+        } catch (err) {
+          console.error(err);
+          uploadText.textContent = 'Upload error';
+        }
+      }
+    </script>
 	</body>
 </html>

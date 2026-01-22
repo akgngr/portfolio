@@ -1,15 +1,17 @@
-import { defineDb, defineTable, column } from 'astro:db';
+export type ProjectRow = {
+  id: number;
+  title: string;
+  description: string;
+  imageUrl: string;
+  publishedAt: string;
+};
 
-const Projects = defineTable({
-  columns: {
-    id: column.number({ primaryKey: true }),
-    title: column.text(),
-    description: column.text(),
-    imageUrl: column.text(),
-    publishedAt: column.date()
-  }
-});
-
-export default defineDb({
-  tables: { Projects }
-});
+export const PROJECTS_TABLE_SQL = `
+CREATE TABLE IF NOT EXISTS Projects (
+  id INTEGER PRIMARY KEY,
+  title TEXT NOT NULL,
+  description TEXT NOT NULL,
+  imageUrl TEXT NOT NULL,
+  publishedAt TEXT NOT NULL
+);
+`;

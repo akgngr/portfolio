@@ -6,6 +6,7 @@ type R2Bucket = import('@cloudflare/workers-types').R2Bucket;
 type ENV = {
   DB: D1Database;
   R2_ASSETS: R2Bucket;
+  R2_PUBLIC_BASE_URL: string;
 };
 
 type Runtime = import("@astrojs/cloudflare").Runtime<ENV>;

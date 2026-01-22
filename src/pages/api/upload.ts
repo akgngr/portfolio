@@ -16,12 +16,28 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const arrayBuffer = await file.arrayBuffer();
     // Use the R2 bucket binding from locals
     // Note: ensure 'R2_ASSETS' matches your wrangler.toml binding
-    await locals.runtime.env.R2_ASSETS.put(filename, arrayBuffer);
+    await locals.runtime.env.R2_ASSETS.put(filename, arrayBuffer, {
+      httpMetadata: {
+        contentType: file.type || 'application/octet-stream'
+      }
+    });
     
-    // Construct the public URL
-    // In production, you would use your custom domain or R2 dev URL
-    // Here we assume a placeholder domain as per instructions/example
-    const url = `https://pub-your-r2-domain.r2.dev/${filename}`; 
+    const base = locals.runtime.env.R2_PUBLIC_BASE_URL;
+    if (!base) {
+      return new Response(
+        JSON.stringify({
+          error:
+            'Missing env.R2_PUBLIC_BASE_URL. Set it to your public R2 domain (e.g. https://<bucket>.<account>.r2.dev/ or a custom domain).'
+        }),
+        {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
+    }
+
+    const normalizedBase = base.endsWith('/') ? base : `${base}/`;
+    const url = new URL(filename, normalizedBase).toString();
 
     return new Response(JSON.stringify({ 
       success: true, 

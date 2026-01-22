@@ -1,15 +1,32 @@
 ---
-import { db, Projects } from 'astro:db';
+type Project = {
+  id: number;
+  title: string;
+  description: string;
+  imageUrl: string;
+  publishedAt: string;
+};
 
-// Fetch all projects sorted by date (newest first)
-let projects: any[] = [];
-let error = null;
+const d1 = Astro.locals.runtime?.env?.DB;
 
-try {
-  projects = await db.select().from(Projects);
-} catch (e: any) {
-  console.error('Database Error:', e);
-  error = e instanceof Error ? e.message : 'Unknown database error';
+let projects: Project[] = [];
+let error: string | null = null;
+
+if (!d1) {
+  error = 'Missing D1 binding: env.DB';
+} else {
+  try {
+    const { results } = await d1
+      .prepare(
+        'SELECT id, title, description, imageUrl, publishedAt FROM Projects ORDER BY publishedAt DESC'
+      )
+      .all<Project>();
+
+    projects = results ?? [];
+  } catch (e) {
+    console.error('Database Error:', e);
+    error = e instanceof Error ? e.message : 'Unknown database error';
+  }
 }
 ---
 

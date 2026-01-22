@@ -1,7 +1,7 @@
 {
 	"name": "portfolio",
 	"pages_build_output_dir": "dist",
-	"compatibility_date": "2024-01-01",
+	"compatibility_date": "2026-01-20",
 	"compatibility_flags": [
 		"nodejs_compat"
 	],
@@ -17,5 +17,8 @@
 			"binding": "R2_ASSETS",
 			"bucket_name": "portfolio-assets"
 		}
-	]
+	],
+	"vars": {
+		"R2_PUBLIC_BASE_URL": "https://pub-your-r2-domain.r2.dev/"
+	}
 }
