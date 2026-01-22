@@ -1,0 +1,12 @@
+name = "portflio"
+pages_build_output_dir = "dist"
+compatibility_date = "2024-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "portfolio-db"
+database_id = "3076ad32-5951-4ded-94ef-4606d9562d99"
+
+[[r2_buckets]]
+binding = "R2_ASSETS"
+bucket_name = "portfolio-assets"
