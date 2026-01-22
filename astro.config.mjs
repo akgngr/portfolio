@@ -7,7 +7,9 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   output: 'server',
   adapter: cloudflare({
-    mode: 'server'
+    platformProxy: {
+      enabled: true,
+    },
   }),
   integrations: [db()],
   image: {
