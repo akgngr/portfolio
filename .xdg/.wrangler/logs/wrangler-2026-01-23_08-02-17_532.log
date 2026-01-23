@@ -1,0 +1,66 @@
+
+--- 2026-01-23T08:02:17.665Z debug
+🪵  Writing logs to "/Users/akgngr/Documents/trae_projects/astro_portfolio/.xdg/.wrangler/logs/wrangler-2026-01-23_08-02-17_532.log"
+---
+
+--- 2026-01-23T08:02:17.665Z debug
+Metrics dispatcher: Dispatching disabled - would have sent {"deviceId":"cc56cc34-34fb-453e-a84d-d46e160ff2bb","event":"wrangler command started","timestamp":1769155337665,"properties":{"amplitude_session_id":1769155337663,"amplitude_event_id":0,"wranglerVersion":"4.60.0","wranglerMajorVersion":4,"wranglerMinorVersion":60,"wranglerPatchVersion":0,"osPlatform":"Mac OS","osVersion":"Darwin Kernel Version 25.2.0: Tue Nov 18 21:09:55 PST 2025; root:xnu-12377.61.12~1/RELEASE_ARM64_T8103","nodeVersion":22,"packageManager":"npm","isFirstUsage":true,"configFileType":"jsonc","isCI":false,"isPagesCI":false,"isWorkersCI":false,"isInteractive":true,"hasAssets":false,"argsUsed":["local"],"argsCombination":"local","agent":null,"command":"wrangler d1 migrations apply","args":{}}}.
+---
+
+--- 2026-01-23T08:02:17.667Z debug
+.env file not found at "/Users/akgngr/Documents/trae_projects/astro_portfolio/.env". Continuing... For more details, refer to https://developers.cloudflare.com/workers/wrangler/system-environment-variables/
+---
+
+--- 2026-01-23T08:02:17.672Z log
+
+ ⛅️ wrangler 4.60.0
+───────────────────
+---
+
+--- 2026-01-23T08:02:17.672Z log
+Resource location: local 
+
+---
+
+--- 2026-01-23T08:02:17.673Z log
+Use --remote if you want to access the remote instance.
+
+---
+
+--- 2026-01-23T08:02:17.681Z log
+🌀 Executing on local database portfolio-db (3076ad32-5951-4ded-94ef-4606d9562d99) from .wrangler/state/v3/d1:
+---
+
+--- 2026-01-23T08:02:17.681Z log
+🌀 To execute on your remote database, add a --remote flag to your wrangler command.
+---
+
+--- 2026-01-23T08:02:17.962Z log
+🚣 1 command executed successfully.
+---
+
+--- 2026-01-23T08:02:17.962Z log
+🌀 Executing on local database portfolio-db (3076ad32-5951-4ded-94ef-4606d9562d99) from .wrangler/state/v3/d1:
+---
+
+--- 2026-01-23T08:02:17.962Z log
+🌀 To execute on your remote database, add a --remote flag to your wrangler command.
+---
+
+--- 2026-01-23T08:02:18.078Z log
+🚣 1 command executed successfully.
+---
+
+--- 2026-01-23T08:02:18.079Z log
+Migrations to be applied:
+---
+
+--- 2026-01-23T08:02:18.082Z log
+┌────────────────────────────────┐
+│ name                           │
+├────────────────────────────────┤
+│ 0001_create_projects_table.sql │
+├────────────────────────────────┤
+│ 0001_create_projects.sql       │
+└────────────────────────────────┘
+---
