@@ -1,4 +1,4 @@
-import { defineConfig, passthroughImageService } from 'astro/config';
+import { defineConfig } from 'astro/config';
 import cloudflare from '@astrojs/cloudflare';
 import tailwindcss from '@tailwindcss/vite';
 
@@ -10,10 +10,10 @@ export default defineConfig({
       enabled: true,
     },
   }),
-  image: {
-    service: passthroughImageService()
-  },
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [tailwindcss()],
+    ssr: {
+      external: ['node:buffer']
+    }
   }
 });
