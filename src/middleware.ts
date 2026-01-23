@@ -1,26 +1,5 @@
 import { defineMiddleware } from 'astro:middleware';
 
-// React 19 SSR polyfill for Cloudflare Workers
-if (typeof MessageChannel === 'undefined') {
-  try {
-    // @ts-ignore
-    const { MessageChannel: NodeMessageChannel } = await import('node:worker_threads');
-    // @ts-ignore
-    globalThis.MessageChannel = NodeMessageChannel;
-  } catch (e) {
-    // Fallback mock if node:worker_threads is not available
-    // @ts-ignore
-    globalThis.MessageChannel = class MessageChannel {
-      port1: any;
-      port2: any;
-      constructor() {
-        this.port1 = { onmessage: null, postMessage: (msg: any) => this.port2?.onmessage?.({ data: msg }) };
-        this.port2 = { onmessage: null, postMessage: (msg: any) => this.port1?.onmessage?.({ data: msg }) };
-      }
-    };
-  }
-}
-
 export const onRequest = defineMiddleware(async (context, next) => {
   const { url, request, locals } = context;
 

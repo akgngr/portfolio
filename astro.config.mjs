@@ -16,8 +16,13 @@ export default defineConfig({
 
   vite: {
     plugins: [tailwindcss()],
+    resolve: {
+      alias: {
+        'react-dom/server': 'react-dom/server.edge'
+      }
+    },
     ssr: {
-      external: ['node:buffer', 'node:worker_threads']
+      external: ['node:buffer']
     }
   },
 
