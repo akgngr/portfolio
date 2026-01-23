@@ -1,0 +1,151 @@
+---
+// src/pages/blog/index.astro
+import Layout from '../../layouts/Layout.astro';
+import SectionTitle from '../../components/ui/SectionTitle.astro';
+import BentoCard from '../../components/BentoCard.astro';
+import { Instagram, Facebook, Disc } from 'lucide-react';
+import { getBlogPosts } from '../../lib/db';
+
+const db = Astro.locals.runtime?.env?.DB;
+
+let blogPosts: any[] = [];
+
+if (db) {
+  blogPosts = await getBlogPosts(db);
+}
+
+const BLOG_PAGE_DATA = {
+  hero: {
+    title: {
+      line1: 'Journey Through',
+      highlight: "Life's Spectrum"
+    },
+    introTitle: "AshGray's Blog",
+    introText: "Welcome to my digital garden. A realm of reflection, inspiration, and discovery, where words illuminate paths of meaning and technology meets humanity.",
+    joinButtonText: 'Subscribe Now'
+  }
+};
+
+const heroPosts = blogPosts.slice(0, 3);
+const remainingPosts = blogPosts.length > 3 ? blogPosts.slice(3) : [];
+---
+
+<Layout title="Blog" description={BLOG_PAGE_DATA.hero.introText}>
+  <div class="pt-32 pb-20 px-6 max-w-[1400px] mx-auto">
+    {/* --- HERO BENTO GRID --- */}
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-32 min-h-[auto] lg:h-[700px]">
+      
+      {/* COLUMN 1 (Left): Stacked Small Cards (001 & 002) - Spans 3 cols */}
+      <div class="lg:col-span-3 flex flex-col gap-6 h-full">
+           {heroPosts[0] && <BentoCard post={heroPosts[0]} index={1} className="flex-1 min-h-[320px]" showCutout={true} />}
+           {heroPosts[1] && <BentoCard post={heroPosts[1]} index={2} className="flex-1 min-h-[320px]" showCutout={true} />}
+      </div>
+
+      {/* COLUMN 2 (Center): Main Image & Title - Spans 6 cols */}
+      <div class="lg:col-span-6 flex flex-col h-full gap-6">
+          {/* Main Image - Rounded Rectangle */}
+          <div class="flex-[3] bg-surface rounded-[48px] overflow-hidden relative group">
+              <img 
+                  src="https://picsum.photos/1200/1000?random=hero" 
+                  alt="Hero" 
+                  class="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-700"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-[#1a1d29]/40 to-transparent"></div>
+          </div>
+          
+          {/* Big Typography Section */}
+          <div class="flex-1 flex flex-col justify-end pb-2 pl-4">
+              <h1 class="text-5xl md:text-7xl lg:text-[5.5rem] font-bold text-white tracking-tight leading-[0.95]">
+                  {BLOG_PAGE_DATA.hero.title.line1} <br/>
+                  <span class="text-[#8b8d98] font-normal font-serif italic">{BLOG_PAGE_DATA.hero.title.highlight}</span>
+              </h1>
+          </div>
+      </div>
+
+      {/* COLUMN 3 (Right): Intro & Card 003 - Spans 3 cols */}
+      <div class="lg:col-span-3 flex flex-col justify-between gap-6 h-full">
+          {/* Intro Text Block */}
+          <div class="flex flex-col justify-start pt-6 px-4">
+              <p class="text-text-body text-sm leading-relaxed mb-8">
+                  {BLOG_PAGE_DATA.hero.introText}
+              </p>
+              
+              <div class="flex flex-col gap-6">
+                   <button class="bg-[#333541] text-white font-medium py-3 px-8 rounded-full hover:bg-white hover:text-black transition-all w-fit shadow-lg text-sm">
+                       {BLOG_PAGE_DATA.hero.joinButtonText}
+                   </button>
+                   
+                   <div class="flex gap-3">
+                       <button class="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center text-text-muted hover:text-black hover:bg-white hover:border-white transition-all">
+                           <Instagram size={20} />
+                       </button>
+                       <button class="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center text-text-muted hover:text-black hover:bg-white hover:border-white transition-all">
+                           <Facebook size={20} />
+                       </button>
+                       <button class="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center text-text-muted hover:text-black hover:bg-white hover:border-white transition-all">
+                           <Disc size={20} />
+                       </button>
+                   </div>
+              </div>
+          </div>
+
+          {/* Bottom Card (003) */}
+           {heroPosts[2] && (
+               <div class="flex-1 min-h-[280px] relative">
+                   <BentoCard post={heroPosts[2]} index={3} className="h-full" showCutout={true} />
+                   <div class="absolute top-6 left-6 z-30 pointer-events-none">
+                      <span class="px-4 py-1.5 rounded-full bg-black/40 backdrop-blur-xl border border-white/10 text-[10px] font-bold uppercase text-white shadow-xl">
+                          Community
+                      </span>
+                   </div>
+               </div>
+           )}
+      </div>
+    </div>
+
+    {/* --- SECTION DIVIDER --- */}
+    <div class="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-16"></div>
+
+    <SectionTitle 
+      title="Recent Articles" 
+      subtitle="Explore more insights and tutorials." 
+    />
+
+    {/* --- STANDARD GRID (Remaining Posts) --- */}
+    {blogPosts.length > 0 ? (
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {blogPosts.map((post, idx) => ( 
+             <a href={`/blog/${post.id}`} class="p-0 flex flex-col h-full group">
+               <div class="h-[280px] relative overflow-hidden rounded-[40px] mb-6">
+                  <img 
+                      src={post.imageUrl} 
+                      alt={post.title} 
+                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors"></div>
+                  <span class="absolute top-6 left-6 bg-white/10 backdrop-blur-md text-white text-[10px] uppercase font-bold px-4 py-1.5 rounded-full border border-white/10">
+                      {post.category}
+                  </span>
+               </div>
+               <div class="flex flex-col flex-1 px-4">
+                  <div class="flex justify-between text-[11px] text-text-muted mb-3 font-mono uppercase tracking-widest">
+                      <span>{post.date}</span>
+                      <span>00{idx + 1}</span>
+                  </div>
+                  <h4 class="text-2xl font-bold text-white mb-3 group-hover:text-primary transition-colors leading-tight">
+                      {post.title}
+                  </h4>
+                  <p class="text-text-body text-sm line-clamp-2 mb-4">
+                      {post.excerpt}
+                  </p>
+               </div>
+             </a>
+          ))}
+        </div>
+    ) : (
+        <div class="text-center py-20 border border-dashed border-white/10 rounded-3xl">
+            <p class="text-text-muted">No more articles to load at the moment.</p>
+        </div>
+    )}
+  </div>
+</Layout>

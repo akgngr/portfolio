@@ -1,0 +1,13 @@
+---
+// src/components/ui/Card.astro
+interface Props {
+  className?: string;
+  onClick?: string; // For Astro, we can't easily pass onClick as a function unless it's a client component
+}
+
+const { className = "" } = Astro.props;
+---
+
+<div class={`bg-surface/30 backdrop-blur-sm border border-white/5 rounded-2xl p-6 transition-all duration-300 ${className}`}>
+  <slot />
+</div>

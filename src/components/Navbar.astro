@@ -1,0 +1,92 @@
+---
+// src/components/Navbar.astro
+const navLinks = [
+  { name: 'Home', path: '/' },
+  { name: 'About', path: '/about' },
+  { name: 'Skills', path: '/skills' },
+  { name: 'Projects', path: '/projects' },
+  { name: 'Blog', path: '/blog' },
+  { name: 'Contact', path: '/contact' },
+];
+
+const currentPath = Astro.url.pathname;
+const isActive = (path: string) => {
+    if (path === '/') return currentPath === '/';
+    return currentPath.startsWith(path);
+};
+---
+
+<nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-6 px-4 md:px-8">
+  <div class="max-w-7xl mx-auto rounded-lg bg-[#1a1d29]/80 backdrop-blur-md border border-white/5 flex items-center justify-between px-6 py-4">
+    {/* Logo */}
+    <a href="/" class="text-xl font-bold cursor-pointer text-white tracking-tight">
+      Dev<span class="text-text-muted">Portfolio</span>
+    </a>
+
+    {/* Desktop Nav */}
+    <div class="hidden md:flex space-x-1">
+      {navLinks.map((link) => (
+        <a
+          href={link.path}
+          class={`px-5 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
+            isActive(link.path) 
+              ? 'text-white bg-white/5' 
+              : 'text-text-body hover:text-white hover:bg-white/5'
+          }`}
+        >
+          {link.name}
+        </a>
+      ))}
+    </div>
+
+    {/* Mobile Menu Toggle */}
+    <div class="md:hidden">
+      <button id="menu-toggle" class="text-white focus:outline-none">
+        <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu"><line x1="3" x2="21" y1="6" y2="6"/><line x1="3" x2="21" y1="12" y2="12"/><line x1="3" x2="21" y1="18" y2="18"/></svg>
+        <svg id="close-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x hidden"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+  </div>
+
+  {/* Mobile Nav Overlay */}
+  <div id="mobile-menu" class="hidden md:hidden absolute top-[90px] left-4 right-4 bg-surface rounded-lg p-6 border border-white/10 flex flex-col space-y-2 animate-in slide-in-from-top-4">
+     {navLinks.map((link) => (
+      <a
+        href={link.path}
+        class={`w-full text-left px-5 py-3 rounded-lg text-base font-medium transition-all ${
+          isActive(link.path) 
+            ? 'text-white bg-white/5' 
+            : 'text-text-body hover:text-white hover:bg-white/5'
+        }`}
+      >
+        {link.name}
+      </a>
+    ))}
+  </div>
+</nav>
+
+<script>
+  const navbar = document.getElementById('navbar');
+  const menuToggle = document.getElementById('menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const menuIcon = document.getElementById('menu-icon');
+  const closeIcon = document.getElementById('close-icon');
+
+  // Scroll effect
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 50) {
+      navbar?.classList.remove('py-6');
+      navbar?.classList.add('py-4');
+    } else {
+      navbar?.classList.remove('py-4');
+      navbar?.classList.add('py-6');
+    }
+  });
+
+  // Mobile menu toggle
+  menuToggle?.addEventListener('click', () => {
+    mobileMenu?.classList.toggle('hidden');
+    menuIcon?.classList.toggle('hidden');
+    closeIcon?.classList.toggle('hidden');
+  });
+</script>

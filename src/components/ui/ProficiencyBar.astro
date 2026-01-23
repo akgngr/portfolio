@@ -1,0 +1,15 @@
+---
+// src/components/ui/ProficiencyBar.astro
+interface Props {
+  level: number;
+}
+
+const { level } = Astro.props;
+---
+
+<div class="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+  <div 
+    class="h-full bg-gradient-to-r from-primary to-secondary rounded-full group-hover:shadow-[0_0_12px_rgba(99,102,241,0.5)] transition-all duration-700 ease-out" 
+    style={`width: ${level}%`}
+  ></div>
+</div>

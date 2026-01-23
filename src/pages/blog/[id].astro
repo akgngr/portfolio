@@ -1,0 +1,94 @@
+---
+// src/pages/blog/[id].astro
+import Layout from '../../layouts/Layout.astro';
+import { ArrowLeft, Calendar, Clock, User, Share2 } from 'lucide-react';
+import { getBlogPostById } from '../../lib/db';
+
+const { id } = Astro.params;
+const db = Astro.locals.runtime?.env?.DB;
+
+if (!db || !id) {
+  return Astro.redirect('/404');
+}
+
+const post = await getBlogPostById(db, id);
+if (!post) {
+  return Astro.redirect('/404');
+}
+---
+
+<Layout title={post.title} description={post.excerpt}>
+    <article class="pt-32 pb-20 min-h-screen">
+      {/* Blog Hero */}
+      <div class="max-w-4xl mx-auto px-6 mb-16">
+        <a 
+            href="/blog"
+            class="group inline-flex items-center gap-2 text-text-muted hover:text-white transition-colors mb-8 text-sm font-medium"
+        >
+            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+            Back to Blog
+        </a>
+
+        <div class="space-y-6">
+            <span class="inline-block py-1 px-4 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider">
+                {post.category}
+            </span>
+            <h1 class="text-4xl md:text-6xl font-bold text-white tracking-tight leading-tight">
+                {post.title}
+            </h1>
+            
+            <div class="flex flex-wrap items-center gap-6 text-sm text-text-muted border-t border-white/5 pt-6">
+                <div class="flex items-center gap-2">
+                    <Calendar size={16} />
+                    {post.date}
+                </div>
+                <div class="flex items-center gap-2">
+                    <Clock size={16} />
+                    {post.readTime || '5 min read'}
+                </div>
+                <div class="flex items-center gap-2">
+                    <User size={16} />
+                    John Doe
+                </div>
+            </div>
+        </div>
+      </div>
+
+      {/* Featured Image */}
+      <div class="max-w-5xl mx-auto px-6 mb-20">
+         <div class="aspect-[21/9] w-full rounded-[40px] overflow-hidden border border-white/10 shadow-2xl">
+             <img 
+                src={post.imageUrl} 
+                alt={post.title} 
+                class="w-full h-full object-cover"
+             />
+         </div>
+      </div>
+
+      {/* Blog Content */}
+      <div class="max-w-3xl mx-auto px-6">
+         <div class="prose prose-invert prose-lg max-w-none" set:html={post.content || post.excerpt}>
+         </div>
+
+         {/* Author Bio & Share */}
+         <div class="mt-20 pt-10 border-t border-white/10">
+             <div class="flex flex-col md:flex-row justify-between items-center gap-8">
+                 <div class="flex items-center gap-4">
+                     <div class="w-12 h-12 rounded-full overflow-hidden border border-white/10">
+                         <img src="https://picsum.photos/100/100?grayscale" alt="Author" />
+                     </div>
+                     <div>
+                         <span class="block text-white font-bold">John Doe</span>
+                         <span class="text-xs text-text-muted">Full Stack Engineer</span>
+                     </div>
+                 </div>
+                 <div class="flex gap-4">
+                     <button class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-text-muted hover:text-white hover:bg-white/5 transition-all">
+                         <Share2 size={18} />
+                     </button>
+                 </div>
+             </div>
+         </div>
+      </div>
+    </article>
+</Layout>

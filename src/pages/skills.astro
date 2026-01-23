@@ -1,0 +1,95 @@
+---
+// src/pages/skills.astro
+import Layout from '../layouts/Layout.astro';
+import SectionTitle from '../components/ui/SectionTitle.astro';
+import ProficiencyBar from '../components/ui/ProficiencyBar.astro';
+import { Layout as LayoutIcon, Database, Cloud, Terminal } from 'lucide-react';
+import { getSkills } from '../lib/db';
+
+const db = Astro.locals.runtime?.env?.DB;
+
+let skills: any[] = [];
+
+if (db) {
+  skills = await getSkills(db);
+}
+
+const categories = {
+    Frontend: skills.filter(s => s.category === 'Frontend'),
+    Backend: skills.filter(s => s.category === 'Backend'),
+    DevOps: skills.filter(s => s.category === 'DevOps'),
+    Tools: skills.filter(s => s.category === 'Tools'),
+};
+
+const getCategoryIcon = (cat: string) => {
+    switch(cat) {
+        case 'Frontend': return LayoutIcon;
+        case 'Backend': return Database;
+        case 'DevOps': return Cloud;
+        default: return Terminal;
+    }
+};
+---
+
+<Layout title="Skills & Expertise" description="A comprehensive look at my technical skills, including Frontend, Backend, and DevOps technologies.">
+  <section class="pt-32 pb-20 px-6 max-w-6xl mx-auto">
+    <SectionTitle 
+      title="Technical Proficiency" 
+      subtitle="A detailed breakdown of my technical capabilities and tool mastery."
+    />
+    
+    <div class="grid grid-cols-1 gap-12">
+      {Object.entries(categories).map(([category, catSkills]) => {
+          const Icon = getCategoryIcon(category);
+          return catSkills.length > 0 && (
+              <div class="animate-in slide-in-from-bottom-4 duration-700">
+                  <div class="flex items-center gap-3 mb-6 pb-2 border-b border-white/10">
+                      <span class="text-primary bg-primary/10 p-2 rounded-md">
+                          <Icon size={18} />
+                      </span>
+                      <h3 class="text-xl font-bold text-white uppercase tracking-wider font-mono">
+                          {category}
+                      </h3>
+                  </div>
+
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+                      {catSkills.map((skill) => (
+                          <div class="group">
+                              <div class="flex items-end justify-between mb-2">
+                                  <div class="flex items-center gap-3">
+                                      <span class="text-xl opacity-80 group-hover:opacity-100 transition-opacity">
+                                          {skill.icon}
+                                      </span>
+                                      <div>
+                                          <h4 class="text-white font-bold text-base leading-none mb-1">
+                                              {skill.name}
+                                          </h4>
+                                          <span class="text-xs text-text-muted font-mono">
+                                              {skill.description}
+                                          </span>
+                                      </div>
+                                  </div>
+                                  <span class="text-xs font-mono font-bold text-text-body group-hover:text-white transition-colors">
+                                      LVL.{Math.floor((skill.level || 0) / 10)}
+                                  </span>
+                              </div>
+                              
+                              <ProficiencyBar level={skill.level || 50} />
+                          </div>
+                      ))}
+                  </div>
+              </div>
+          );
+      })}
+    </div>
+
+    {/* Decorative Footer for Section */}
+    <div class="mt-20 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-xs text-text-muted font-mono uppercase tracking-widest">
+          <span>System Status: Operational</span>
+          <div class="flex gap-4 mt-4 md:mt-0">
+              <span>Uptime: 99.9%</span>
+              <span>Last Updated: Today</span>
+          </div>
+    </div>
+  </section>
+</Layout>

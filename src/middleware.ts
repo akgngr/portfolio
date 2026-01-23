@@ -3,23 +3,36 @@ import { defineMiddleware } from 'astro:middleware';
 export const onRequest = defineMiddleware(async (context, next) => {
   const { url, request, locals } = context;
 
-  // Sadece /admin ile başlayan rotaları koru
-  if (url.pathname.startsWith('/admin')) {
-    const adminEmail = request.headers.get('Cf-Access-Authenticated-User-Email');
+  // Sadece /admin ve hassas API rotalarını koru
+  if (url.pathname.startsWith('/admin') || url.pathname.startsWith('/api/projects')) {
+    
+    // Cloudflare bazen header isimlerini küçük harfe zorlayabilir
+    const adminEmail = 
+      request.headers.get('Cf-Access-Authenticated-User-Email') || 
+      request.headers.get('cf-access-authenticated-user-email');
 
-    // Yerel geliştirmede (localhost) Cloudflare header'ı olmayacağı için geçişe izin ver
-    // Prod ortamında ise header yoksa 403 döndür
+    // Ortam kontrolü
     const isLocal = url.hostname === 'localhost' || url.hostname === '127.0.0.1';
-    const effectiveEmail = adminEmail || (isLocal ? 'admin@local.test' : null);
+    const isDev = import.meta.env.DEV;
+    
+    const effectiveEmail = adminEmail || (isLocal || isDev ? 'admin@local.test' : null);
 
     if (!effectiveEmail) {
-      return new Response('Not Authorized: Cloudflare Access header missing. Please access through Cloudflare Zero Trust.', { 
-        status: 403,
-        headers: { 'Content-Type': 'text/plain' }
-      });
+      // Hata durumunda hangi header'ların geldiğini görmek için (debug amaçlı)
+      const headerKeys = Array.from(request.headers.keys()).join(', ');
+      
+      return new Response(
+        `Not Authorized: Cloudflare Access header missing.\n\n` +
+        `Gelen Header'lar: ${headerKeys}\n\n` +
+        `Lütfen Cloudflare Zero Trust panelinden /admin yolunun korunduğundan ve doğru politikaların uygulandığından emin olun.`, 
+        { 
+          status: 403,
+          headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+        }
+      );
     }
 
-    // Locals içine kullanıcı bilgisini koy (sayfalarda kullanabilmek için)
+    // Locals içine kullanıcı bilgisini koy
     locals.user = { email: effectiveEmail };
   }
 

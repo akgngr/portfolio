@@ -1,92 +1,31 @@
 ---
-type Project = {
-  id: number;
-  title: string;
-  description: string;
-  imageUrl: string;
-  publishedAt: string;
-};
+// src/pages/index.astro
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import ProjectsSection from '../components/ProjectsSection.astro';
+import SkillsSection from '../components/SkillsSection.astro';
+import CallToAction from '../components/CallToAction.astro';
+import { getProjects, getSkills, getProfile } from '../lib/db';
 
-const d1 = Astro.locals.runtime?.env?.DB;
+const db = Astro.locals.runtime?.env?.DB;
 
-let projects: Project[] = [];
-let error: string | null = null;
+let projects = [];
+let skills = [];
+let profile = null;
 
-if (!d1) {
-  error = 'Missing D1 binding: env.DB';
-} else {
-  try {
-    const { results } = await d1
-      .prepare(
-        'SELECT id, title, description, imageUrl, publishedAt FROM Projects ORDER BY publishedAt DESC'
-      )
-      .all<Project>();
-
-    projects = results ?? [];
-  } catch (e) {
-    console.error('Database Error:', e);
-    error = e instanceof Error ? e.message : 'Unknown database error';
-  }
+if (db) {
+  projects = (await getProjects(db)).slice(0, 3);
+  skills = (await getSkills(db)).slice(0, 8);
+  profile = await getProfile(db);
 }
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>My Portfolio Site</title>
-	</head>
-	<body class="bg-slate-50 min-h-screen text-slate-900">
-		<main class="container mx-auto px-4 py-12">
-			<header class="mb-12 text-center">
-				<h1 class="text-4xl font-bold text-slate-800 mb-4">Portfolio Showcase</h1>
-				<p class="text-slate-600 max-w-2xl mx-auto">
-					Welcome to my portfolio. Here are some of the projects I've been working on.
-				</p>
-                <div class="mt-6">
-                    <a href="/admin" class="text-sky-600 hover:text-sky-700 font-medium">Go to Admin Panel &rarr;</a>
-                </div>
-			</header>
-			
-            {error && (
-                <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative mb-8" role="alert">
-                    <strong class="font-bold">Error loading projects:</strong>
-                    <span class="block sm:inline"> {error}</span>
-                    <p class="text-sm mt-2">Make sure the <code>DB</code> binding is configured in your Cloudflare Pages settings.</p>
-                </div>
-            )}
-
-			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-				{projects.map((project) => (
-					<article class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col h-full">
-						<div class="aspect-video bg-slate-200 w-full overflow-hidden">
-							<img 
-                                src={project.imageUrl} 
-                                alt={project.title} 
-                                class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                                loading="lazy"
-                            />
-						</div>
-						<div class="p-6 flex-1 flex flex-col">
-							<h2 class="text-xl font-bold text-slate-800 mb-2">{project.title}</h2>
-							<div class="text-xs text-slate-400 mb-4 uppercase tracking-wider">
-								{new Date(project.publishedAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
-							</div>
-							<p class="text-slate-600 text-sm leading-relaxed flex-1">
-                                {project.description}
-                            </p>
-						</div>
-					</article>
-				))}
-			</div>
-
-            {projects.length === 0 && (
-                <div class="text-center py-20">
-                    <p class="text-slate-400 text-lg">No projects published yet.</p>
-                </div>
-            )}
-		</main>
-	</body>
-</html>
+<Layout 
+    title="Home" 
+    description={profile?.about?.[0] || "I help companies build modern, scalable, and secure web applications."}
+>
+    <Hero />
+    <ProjectsSection projects={projects} />
+    <SkillsSection skills={skills} />
+    <CallToAction />
+</Layout>

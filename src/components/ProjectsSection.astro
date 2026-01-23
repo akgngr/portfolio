@@ -1,0 +1,31 @@
+---
+// src/components/ProjectsSection.astro
+import ProjectCard from './ProjectCard.astro';
+
+interface Props {
+  projects: any[];
+}
+
+const { projects } = Astro.props;
+---
+
+<section class="px-6 max-w-7xl mx-auto py-20">
+  <div class="relative">
+    <div class="text-center mb-16 space-y-4">
+      <h2 class="text-3xl md:text-5xl font-bold text-white tracking-tight">Featured Projects</h2>
+      <p class="text-text-body max-w-2xl mx-auto">A selection of projects that demonstrate my passion for building high-quality software.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {projects.map((project) => (
+        <ProjectCard project={project} />
+      ))}
+    </div>
+
+    <div class="flex justify-center mt-16">
+       <a href="/projects" class="px-8 py-3 bg-surface text-white border border-white/10 rounded-lg text-sm font-bold hover:bg-surface/80 transition-all hover:border-white/20">
+         View All Projects
+       </a>
+    </div>
+  </div>
+</section>

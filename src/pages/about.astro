@@ -1,0 +1,121 @@
+---
+// src/pages/about.astro
+import Layout from '../layouts/Layout.astro';
+import Card from '../components/ui/Card.astro';
+import TimelineItem from '../components/TimelineItem.astro';
+import { GraduationCap, Heart } from 'lucide-react';
+import { getProfile, getExperiences } from '../lib/db';
+
+const db = Astro.locals.runtime?.env?.DB;
+
+let profile = null;
+let experiences: any[] = [];
+
+if (db) {
+  profile = await getProfile(db);
+  experiences = await getExperiences(db);
+}
+
+// Fallback profile if DB is empty
+const defaultProfile = {
+  name: 'John Doe',
+  role: 'Full Stack Engineer',
+  location: 'Istanbul, Turkey',
+  about: ["I'm a passionate developer."],
+  yearsOfExperience: '5+',
+  completedProjects: '50+',
+  profileImage: 'https://picsum.photos/800/1000?grayscale',
+};
+
+const currentProfile = profile || defaultProfile;
+---
+
+<Layout title="About Me" description={`Learn more about ${currentProfile.name}, a ${currentProfile.role} based in ${currentProfile.location}.`}>
+  <div class="pt-32 pb-20 px-6 max-w-7xl mx-auto">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-24 items-center">
+      {/* Left Column: Image/Decoration */}
+      <div class="relative">
+           <div class="relative z-10 bg-surface rounded-xl overflow-hidden aspect-square lg:aspect-[4/5] border border-white/5">
+             <img 
+               src={currentProfile.profileImage} 
+               alt="Profile" 
+               class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
+             />
+             <div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-90"></div>
+             <div class="absolute bottom-8 left-8 right-8">
+               <h2 class="text-3xl font-bold text-white mb-1">{currentProfile.name}</h2>
+               <p class="text-text-muted text-lg">{currentProfile.role}</p>
+             </div>
+           </div>
+      </div>
+
+      {/* Right Column: Content */}
+      <div>
+        <h1 class="text-4xl md:text-6xl font-bold mb-8 text-white tracking-tight">
+          About Me
+        </h1>
+        <div class="space-y-6 text-lg text-text-body leading-relaxed">
+          {currentProfile.about.map((paragraph: unknown) => (
+              <p>{paragraph}</p>
+          ))}
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mt-10">
+          <div class="bg-surface/30 p-6 rounded-xl border border-white/5">
+              <span class="text-3xl font-bold text-white block mb-1">{currentProfile.yearsOfExperience}</span>
+              <span class="text-xs text-text-muted uppercase tracking-widest font-semibold">Years Exp.</span>
+          </div>
+          <div class="bg-surface/30 p-6 rounded-xl border border-white/5">
+              <span class="text-3xl font-bold text-white block mb-1">{currentProfile.completedProjects}</span>
+              <span class="text-xs text-text-muted uppercase tracking-widest font-semibold">Projects</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* Experience Timeline */}
+    <div class="text-center mb-16 space-y-4">
+      <h2 class="text-3xl md:text-5xl font-bold text-white tracking-tight">Experience</h2>
+      <p class="text-text-body max-w-2xl mx-auto">My professional journey so far.</p>
+    </div>
+    
+    <div class="relative space-y-8 pl-8 md:pl-0">
+      {/* Center Line for Desktop */}
+      <div class="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-white/10 -translate-x-1/2"></div>
+
+      {experiences.map((exp, idx) => (
+          <TimelineItem experience={exp} index={idx} />
+      ))}
+    </div>
+
+    {/* Personal Interests */}
+    <div class="mt-32">
+        <div class="text-center mb-16 space-y-4">
+          <h2 class="text-3xl md:text-5xl font-bold text-white tracking-tight">More About Me</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card className="flex items-center gap-4">
+                <div class="bg-white/5 p-3 rounded-lg text-white"><GraduationCap size={24}/></div>
+                <div>
+                    <h4 class="font-bold text-white text-base">Lifelong Learner</h4>
+                    <p class="text-text-muted text-xs">Always exploring new tech</p>
+                </div>
+            </Card>
+             <Card className="flex items-center gap-4">
+                <div class="bg-white/5 p-3 rounded-lg text-white"><Heart size={24}/></div>
+                <div>
+                    <h4 class="font-bold text-white text-base">Open Source</h4>
+                    <p class="text-text-muted text-xs">Community contributor</p>
+                </div>
+            </Card>
+             <Card className="flex items-center gap-4">
+                <div class="bg-white/5 p-3 rounded-lg text-white text-2xl">☕</div>
+                <div>
+                    <h4 class="font-bold text-white text-base">Coffee Enthusiast</h4>
+                    <p class="text-text-muted text-xs">Powered by caffeine</p>
+                </div>
+            </Card>
+        </div>
+    </div>
+  </div>
+</Layout>

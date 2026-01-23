@@ -26,3 +26,5 @@ pnpm-debug.log*
 .vscode/
 .env.local
 .dev.vars
+portfolio-admin-os
+example-yapi

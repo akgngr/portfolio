@@ -1,0 +1,15 @@
+---
+// src/components/ui/SectionTitle.astro
+interface Props {
+  title: string;
+  subtitle?: string;
+  center?: boolean;
+}
+
+const { title, subtitle, center = false } = Astro.props;
+---
+
+<div class={`mb-16 space-y-4 ${center ? 'text-center' : 'text-left'}`}>
+  <h2 class="text-3xl md:text-5xl font-bold text-white tracking-tight">{title}</h2>
+  {subtitle && <p class={`text-text-body max-w-2xl ${center ? 'mx-auto' : ''}`}>{subtitle}</p>}
+</div>

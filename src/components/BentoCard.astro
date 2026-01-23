@@ -1,0 +1,66 @@
+---
+// src/components/BentoCard.astro
+import { ArrowUpRight } from 'lucide-react';
+
+interface Props {
+  post: {
+    id: string;
+    title: string;
+    imageUrl: string;
+    category: string;
+    date: string;
+  };
+  index: number;
+  className?: string;
+  showCutout?: boolean;
+}
+
+const { post, index, className = "", showCutout = true } = Astro.props;
+---
+
+<a 
+  href={`/blog/${post.id}`}
+  class={`relative group overflow-hidden rounded-[40px] bg-surface block ${className}`}
+>
+    {/* Background Image */}
+    <div class="absolute inset-0">
+        <img 
+            src={post.imageUrl} 
+            alt={post.title} 
+            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80"
+        />
+        {/* Gradient Overlay */}
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+    </div>
+
+    {/* Content */}
+    <div class={`relative h-full p-8 flex flex-col justify-between z-10 ${showCutout ? 'pb-2' : ''}`}>
+        {/* Top Row: Tag & Date */}
+        <div class="flex justify-between items-start">
+            <span class="px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-[11px] font-bold uppercase tracking-wider text-white">
+                {post.category}
+            </span>
+            <span class="text-[11px] font-mono text-white/90 bg-black/20 px-3 py-1 rounded-full backdrop-blur-sm">
+                {post.date}
+            </span>
+        </div>
+
+        {/* Bottom Content - Avoid the cutout area with padding/margin */}
+        <div class={`mt-auto ${showCutout ? 'mb-4 mr-24' : ''}`}>
+            <span class="block text-xs font-mono text-white/70 mb-2">00{index}</span>
+            <h3 class="text-2xl md:text-3xl font-bold text-white leading-tight group-hover:text-[#e8e6e3] transition-colors">
+                {post.title}
+            </h3>
+        </div>
+    </div>
+
+    {/* THE CUTOUT EFFECT */}
+    {showCutout && (
+        <div class="absolute bottom-0 right-0 w-[100px] h-[100px] bg-[#1a1d29] rounded-tl-[50px] z-20 flex items-center justify-center pointer-events-none">
+            {/* The Button */}
+            <div class="w-16 h-16 bg-[#e8e6e3] text-black rounded-full flex items-center justify-center shadow-lg pointer-events-auto transform transition-transform duration-300 group-hover:scale-110 group-hover:rotate-45">
+                <ArrowUpRight size={28} />
+            </div>
+        </div>
+    )}
+</a>
