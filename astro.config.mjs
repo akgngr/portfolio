@@ -17,7 +17,7 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
     ssr: {
-      external: ['node:buffer']
+      external: ['node:buffer', 'node:worker_threads']
     }
   },
 
