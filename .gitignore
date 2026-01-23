@@ -25,3 +25,4 @@ pnpm-debug.log*
 .trae/
 .vscode/
 .env.local
+.dev.vars
