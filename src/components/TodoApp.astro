@@ -1,0 +1,125 @@
+---
+// src/components/TodoApp.astro
+---
+
+<div class="bg-white rounded-xl shadow-md p-6 max-w-2xl mx-auto mt-8">
+  <h2 class="text-2xl font-bold text-slate-800 mb-6">Admin To-Do List</h2>
+  
+  <form id="todo-form" class="flex gap-2 mb-6">
+    <input 
+      type="text" 
+      id="todo-input" 
+      placeholder="What needs to be done?" 
+      class="flex-1 px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+      required
+    />
+    <button 
+      type="submit" 
+      class="bg-sky-600 text-white px-6 py-2 rounded-lg hover:bg-sky-700 transition-colors"
+    >
+      Add
+    </button>
+  </form>
+
+  <ul id="todo-list" class="space-y-3">
+    <p class="text-slate-400 text-center py-4">Loading tasks...</p>
+  </ul>
+</div>
+
+<script>
+  const todoForm = document.getElementById('todo-form') as HTMLFormElement;
+  const todoInput = document.getElementById('todo-input') as HTMLInputElement;
+  const todoList = document.getElementById('todo-list') as HTMLUListElement;
+
+  async function fetchTodos() {
+    try {
+      const res = await fetch('/api/todos');
+      const todos = await res.json();
+      renderTodos(todos);
+    } catch (e) {
+      console.error('Fetch error:', e);
+    }
+  }
+
+  function renderTodos(todos: any[]) {
+    if (!todos || todos.length === 0) {
+      todoList.innerHTML = '<p class="text-slate-400 text-center py-4">No tasks yet.</p>';
+      return;
+    }
+
+    todoList.innerHTML = todos.map(todo => `
+      <li class="flex items-center justify-between p-3 bg-slate-50 rounded-lg group">
+        <div class="flex items-center gap-3">
+          <input 
+            type="checkbox" 
+            ${todo.isCompleted ? 'checked' : ''} 
+            data-id="${todo.id}"
+            class="todo-checkbox w-5 h-5 text-sky-600 rounded focus:ring-sky-500 cursor-pointer"
+          />
+          <span class="${todo.isCompleted ? 'line-through text-slate-400' : 'text-slate-700'} font-medium">
+            ${todo.task}
+          </span>
+        </div>
+        <button 
+          data-id="${todo.id}"
+          class="todo-delete text-red-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+          </svg>
+        </button>
+      </li>
+    `).join('');
+
+    // Attach listeners
+    todoList.querySelectorAll('.todo-checkbox').forEach(cb => {
+      cb.addEventListener('change', (e) => {
+        const target = e.target as HTMLInputElement;
+        const id = target.getAttribute('data-id');
+        toggleTodo(id, target.checked);
+      });
+    });
+
+    todoList.querySelectorAll('.todo-delete').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        deleteTodo(id);
+      });
+    });
+  }
+
+  async function toggleTodo(id: string | null, isCompleted: boolean) {
+    if (!id) return;
+    await fetch(`/api/todos/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ isCompleted }),
+      headers: { 'Content-Type': 'application/json' }
+    });
+    fetchTodos();
+  }
+
+  async function deleteTodo(id: string | null) {
+    if (!id || !confirm('Are you sure?')) return;
+    await fetch(`/api/todos/${id}`, { method: 'DELETE' });
+    fetchTodos();
+  }
+
+  todoForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const task = todoInput.value;
+    if (!task) return;
+
+    const res = await fetch('/api/todos', {
+      method: 'POST',
+      body: JSON.stringify({ task }),
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    if (res.ok) {
+      todoInput.value = '';
+      fetchTodos();
+    }
+  });
+
+  fetchTodos();
+</script>

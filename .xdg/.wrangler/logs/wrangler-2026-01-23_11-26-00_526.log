@@ -1,0 +1,97 @@
+
+--- 2026-01-23T11:26:00.623Z debug
+🪵  Writing logs to "/Users/akgngr/Documents/trae_projects/astro_portfolio/.xdg/.wrangler/logs/wrangler-2026-01-23_11-26-00_526.log"
+---
+
+--- 2026-01-23T11:26:00.623Z debug
+Metrics dispatcher: Dispatching disabled - would have sent {"deviceId":"cc56cc34-34fb-453e-a84d-d46e160ff2bb","event":"wrangler command started","timestamp":1769167560623,"properties":{"amplitude_session_id":1769167560621,"amplitude_event_id":0,"wranglerVersion":"4.60.0","wranglerMajorVersion":4,"wranglerMinorVersion":60,"wranglerPatchVersion":0,"osPlatform":"Mac OS","osVersion":"Darwin Kernel Version 25.2.0: Tue Nov 18 21:09:55 PST 2025; root:xnu-12377.61.12~1/RELEASE_ARM64_T8103","nodeVersion":22,"packageManager":"npm","isFirstUsage":true,"configFileType":"jsonc","isCI":true,"isPagesCI":false,"isWorkersCI":false,"isInteractive":true,"hasAssets":false,"argsUsed":["local","persistTo"],"argsCombination":"local, persistTo","agent":null,"command":"wrangler d1 migrations apply","args":{}}}.
+---
+
+--- 2026-01-23T11:26:00.624Z debug
+.env file not found at "/Users/akgngr/Documents/trae_projects/astro_portfolio/.env". Continuing... For more details, refer to https://developers.cloudflare.com/workers/wrangler/system-environment-variables/
+---
+
+--- 2026-01-23T11:26:00.629Z log
+
+ ⛅️ wrangler 4.60.0
+───────────────────
+---
+
+--- 2026-01-23T11:26:00.630Z log
+Resource location: local 
+
+---
+
+--- 2026-01-23T11:26:00.630Z log
+Use --remote if you want to access the remote instance.
+
+---
+
+--- 2026-01-23T11:26:00.639Z log
+🌀 Executing on local database portfolio-db (3076ad32-5951-4ded-94ef-4606d9562d99) from .wrangler/state/v3/d1:
+---
+
+--- 2026-01-23T11:26:00.639Z log
+🌀 To execute on your remote database, add a --remote flag to your wrangler command.
+---
+
+--- 2026-01-23T11:26:01.126Z log
+🚣 1 command executed successfully.
+---
+
+--- 2026-01-23T11:26:01.126Z log
+🌀 Executing on local database portfolio-db (3076ad32-5951-4ded-94ef-4606d9562d99) from .wrangler/state/v3/d1:
+---
+
+--- 2026-01-23T11:26:01.126Z log
+🌀 To execute on your remote database, add a --remote flag to your wrangler command.
+---
+
+--- 2026-01-23T11:26:01.241Z log
+🚣 1 command executed successfully.
+---
+
+--- 2026-01-23T11:26:01.241Z log
+Migrations to be applied:
+---
+
+--- 2026-01-23T11:26:01.244Z log
+┌─────────────────────────────┐
+│ name                        │
+├─────────────────────────────┤
+│ 0002_create_todos_table.sql │
+└─────────────────────────────┘
+---
+
+--- 2026-01-23T11:26:01.244Z log
+? About to apply 1 migration(s)
+Your database may not be available to serve requests during the migration, continue?
+---
+
+--- 2026-01-23T11:26:01.244Z log
+🤖 Using fallback value in non-interactive context: yes
+---
+
+--- 2026-01-23T11:26:01.244Z log
+🌀 Executing on local database portfolio-db (3076ad32-5951-4ded-94ef-4606d9562d99) from .wrangler/state/v3/d1:
+---
+
+--- 2026-01-23T11:26:01.244Z log
+🌀 To execute on your remote database, add a --remote flag to your wrangler command.
+---
+
+--- 2026-01-23T11:26:01.367Z log
+🚣 2 commands executed successfully.
+---
+
+--- 2026-01-23T11:26:01.368Z log
+┌─────────────────────────────┬────────┐
+│ name                        │ status │
+├─────────────────────────────┼────────┤
+│ 0002_create_todos_table.sql │ ✅     │
+└─────────────────────────────┴────────┘
+---
+
+--- 2026-01-23T11:26:01.369Z debug
+Metrics dispatcher: Dispatching disabled - would have sent {"deviceId":"cc56cc34-34fb-453e-a84d-d46e160ff2bb","event":"wrangler command completed","timestamp":1769167561369,"properties":{"amplitude_session_id":1769167560621,"amplitude_event_id":1,"wranglerVersion":"4.60.0","wranglerMajorVersion":4,"wranglerMinorVersion":60,"wranglerPatchVersion":0,"osPlatform":"Mac OS","osVersion":"Darwin Kernel Version 25.2.0: Tue Nov 18 21:09:55 PST 2025; root:xnu-12377.61.12~1/RELEASE_ARM64_T8103","nodeVersion":22,"packageManager":"npm","isFirstUsage":true,"configFileType":"jsonc","isCI":true,"isPagesCI":false,"isWorkersCI":false,"isInteractive":true,"hasAssets":false,"argsUsed":["local","persistTo"],"argsCombination":"local, persistTo","agent":null,"command":"wrangler d1 migrations apply","args":{},"durationMs":758,"durationSeconds":0.758,"durationMinutes":0.012633333333333333}}.
+---
