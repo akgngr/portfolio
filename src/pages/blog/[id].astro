@@ -17,7 +17,12 @@ if (!post) {
 }
 ---
 
-<Layout title={post.title} description={post.excerpt}>
+<Layout 
+    title={post.metaTitle || post.title} 
+    description={post.metaDescription || post.excerpt}
+    ogImage={post.ogImageUrl || post.imageUrl}
+    keywords={post.focusKeyword}
+>
     <article class="pt-32 pb-20 min-h-screen">
       {/* Blog Hero */}
       <div class="max-w-4xl mx-auto px-6 mb-16">

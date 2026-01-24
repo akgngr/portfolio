@@ -5,9 +5,11 @@ import { ArrowUpRight } from 'lucide-react';
 interface Props {
   post: {
     id: string;
+    slug?: string;
     title: string;
     imageUrl: string;
     category: string;
+    categories?: any[];
     date: string;
   };
   index: number;
@@ -19,13 +21,13 @@ const { post, index, className = "", showCutout = true } = Astro.props;
 ---
 
 <a 
-  href={`/blog/${post.id}`}
+  href={`/blog/${post.slug || post.id}`}
   class={`relative group overflow-hidden rounded-[40px] bg-surface block ${className}`}
 >
     {/* Background Image */}
     <div class="absolute inset-0">
         <img 
-            src={post.imageUrl} 
+            src={post.imageUrl && !post.imageUrl.includes('picsum') ? post.imageUrl : "/images/blog-placeholder.jpg"} 
             alt={post.title} 
             class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80"
         />
@@ -36,10 +38,20 @@ const { post, index, className = "", showCutout = true } = Astro.props;
     {/* Content */}
     <div class={`relative h-full p-8 flex flex-col justify-between z-10 ${showCutout ? 'pb-2' : ''}`}>
         {/* Top Row: Tag & Date */}
-        <div class="flex justify-between items-start">
-            <span class="px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-[11px] font-bold uppercase tracking-wider text-white">
-                {post.category}
-            </span>
+        <div class="flex justify-between items-start flex-wrap gap-2">
+            <div class="flex flex-wrap gap-2">
+                {post.categories && post.categories.length > 0 ? (
+                    post.categories.map((cat: any) => (
+                        <span class="px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-[11px] font-bold uppercase tracking-wider text-white">
+                            {cat.name}
+                        </span>
+                    ))
+                ) : (
+                    <span class="px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-[11px] font-bold uppercase tracking-wider text-white">
+                        {post.category}
+                    </span>
+                )}
+            </div>
             <span class="text-[11px] font-mono text-white/90 bg-black/20 px-3 py-1 rounded-full backdrop-blur-sm">
                 {post.date}
             </span>

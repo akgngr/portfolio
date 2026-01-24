@@ -46,7 +46,7 @@ const remainingPosts = blogPosts.length > 3 ? blogPosts.slice(3) : [];
           {/* Main Image - Rounded Rectangle */}
           <div class="flex-[3] bg-surface rounded-[48px] overflow-hidden relative group">
               <img 
-                  src="https://picsum.photos/1200/1000?random=hero" 
+                  src="/images/blog-placeholder.jpg" 
                   alt="Hero" 
                   class="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-700"
               />
@@ -115,17 +115,27 @@ const remainingPosts = blogPosts.length > 3 ? blogPosts.slice(3) : [];
     {blogPosts.length > 0 ? (
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {blogPosts.map((post, idx) => ( 
-             <a href={`/blog/${post.id}`} class="p-0 flex flex-col h-full group">
-               <div class="h-[280px] relative overflow-hidden rounded-[40px] mb-6">
+             <a href={`/blog/${post.slug || post.id}`} class="p-0 flex flex-col h-full group">
+               <div class="h-70 relative overflow-hidden rounded-[40px] mb-6">
                   <img 
-                      src={post.imageUrl} 
+                      src={post.imageUrl && !post.imageUrl.includes('picsum') ? post.imageUrl : "/images/blog-placeholder.jpg"} 
                       alt={post.title} 
                       class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   />
                   <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors"></div>
-                  <span class="absolute top-6 left-6 bg-white/10 backdrop-blur-md text-white text-[10px] uppercase font-bold px-4 py-1.5 rounded-full border border-white/10">
-                      {post.category}
-                  </span>
+                  <div class="absolute top-6 left-6 flex flex-wrap gap-2">
+                      {post.categories && post.categories.length > 0 ? (
+                          post.categories.map((cat: any) => (
+                              <span class="bg-white/10 backdrop-blur-md text-white text-[10px] uppercase font-bold px-4 py-1.5 rounded-full border border-white/10">
+                                  {cat.name}
+                              </span>
+                          ))
+                      ) : (
+                          <span class="bg-white/10 backdrop-blur-md text-white text-[10px] uppercase font-bold px-4 py-1.5 rounded-full border border-white/10">
+                              {post.category}
+                          </span>
+                      )}
+                  </div>
                </div>
                <div class="flex flex-col flex-1 px-4">
                   <div class="flex justify-between text-[11px] text-text-muted mb-3 font-mono uppercase tracking-widest">

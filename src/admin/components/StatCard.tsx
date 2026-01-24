@@ -12,13 +12,13 @@ interface StatCardProps {
 
 const StatCard: React.FC<StatCardProps> = ({ title, value, trend, trendUp, icon, color }) => {
   return (
-    <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+    <div className="bg-white p-6 rounded-md border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
       <div className="flex justify-between items-start mb-4">
         <div>
           <p className="text-slate-500 text-sm font-medium">{title}</p>
           <h3 className="text-2xl font-bold text-slate-900 mt-1">{value}</h3>
         </div>
-        <div className={`p-2 rounded-lg ${color} bg-opacity-10`}>
+        <div className={`p-2 rounded ${color} bg-opacity-10`}>
            {React.cloneElement(icon as React.ReactElement<any>, { className: `text-${color.split('-')[1]}-600` })}
         </div>
       </div>

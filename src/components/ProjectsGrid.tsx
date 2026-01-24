@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 import { ArrowUpRight } from 'lucide-react';
 
+interface Category {
+  id: number;
+  name: string;
+  slug: string;
+}
+
 interface Project {
   id: string;
   title: string;
@@ -8,6 +14,7 @@ interface Project {
   tags: string[];
   imageUrl: string;
   category: string;
+  categories?: Category[];
 }
 
 interface ProjectsGridProps {
@@ -16,16 +23,22 @@ interface ProjectsGridProps {
 
 const ProjectsGrid: React.FC<ProjectsGridProps> = ({ projects }) => {
   const [filter, setFilter] = useState('All');
-  const categories = ['All', 'Web', 'Mobile', 'Open Source'];
+  
+  // Get unique categories from projects
+  const availableCategories = ['All', ...new Set(projects.flatMap(p => 
+    p.categories?.map(c => c.name) || [p.category]
+  ))].sort();
 
   const filteredProjects = filter === 'All' 
     ? projects 
-    : projects.filter(p => p.category === filter);
+    : projects.filter(p => 
+        p.category === filter || p.categories?.some(c => c.name === filter)
+      );
 
   return (
     <div className="relative">
       <div className="flex flex-wrap gap-2 justify-start mb-12">
-        {categories.map(cat => (
+        {availableCategories.map(cat => (
           <button
             key={cat}
             onClick={() => setFilter(cat)}
@@ -51,7 +64,7 @@ const ProjectsGrid: React.FC<ProjectsGridProps> = ({ projects }) => {
             <div className="h-[240px] w-full overflow-hidden relative border-b border-white/5">
               <div className="absolute inset-0 bg-[#1a1d29]/20 group-hover:bg-transparent transition-colors duration-300 z-10" />
               <img 
-                src={project.imageUrl} 
+                src={project.imageUrl && !project.imageUrl.includes('picsum') ? project.imageUrl : "/images/project-placeholder.jpg"} 
                 alt={project.title} 
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />

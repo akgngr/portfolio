@@ -6,6 +6,9 @@ import ProjectManager from './components/ProjectManager';
 import ServicesManager from './components/ServicesManager';
 import SkillsManager from './components/SkillsManager';
 import PagesManager from './components/PagesManager';
+import BlogManager from './components/BlogManager';
+import BlogEditorPage from './components/BlogEditorPage';
+import ExperienceManager from './components/ExperienceManager';
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
@@ -27,10 +30,13 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/projects" element={<ProjectManager />} />
+          <Route path="/blog" element={<BlogManager />} />
+          <Route path="/blog/new" element={<BlogEditorPage />} />
+          <Route path="/blog/edit/:id" element={<BlogEditorPage />} />
+          <Route path="/experience" element={<ExperienceManager />} />
           <Route path="/services" element={<ServicesManager />} />
           <Route path="/skills" element={<SkillsManager />} />
-          <Route path="/pages" element={<PagesManager />} />
-          <Route path="/settings" element={<div className="text-slate-500">Settings page placeholder</div>} />
+          <Route path="/settings" element={<PagesManager />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Layout>

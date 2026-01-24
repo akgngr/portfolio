@@ -1,14 +1,13 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { LayoutDashboard, FileText, Briefcase, Code, Settings, LogOut, Layers } from 'lucide-react';
-import type { NavItem } from '../types';
+import { LayoutDashboard, FileText, Briefcase, Code, Settings, LogOut, BookOpen, Layers } from 'lucide-react';
 
-const navItems: NavItem[] = [
+const navItems = [
   { label: 'Dashboard', path: '/', icon: <LayoutDashboard size={20} /> },
   { label: 'Projects', path: '/projects', icon: <Briefcase size={20} /> },
-  { label: 'Services', path: '/services', icon: <Layers size={20} /> },
+  { label: 'Blog', path: '/blog', icon: <BookOpen size={20} /> },
+  { label: 'Experience', path: '/experience', icon: <Layers size={20} /> },
   { label: 'Skills', path: '/skills', icon: <Code size={20} /> },
-  { label: 'Pages', path: '/pages', icon: <FileText size={20} /> },
   { label: 'Settings', path: '/settings', icon: <Settings size={20} /> },
 ];
 
@@ -49,7 +48,7 @@ const Sidebar: React.FC = () => {
       <div className="p-4 border-t border-slate-800">
         <a 
           href="https://portfolio-admin-os.cloudflareaccess.com/cdn-cgi/access/logout"
-          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-red-500/10 hover:text-red-400 w-full transition-colors"
+          className="flex items-center gap-3 px-3 py-2.5 rounded text-slate-400 hover:bg-red-500/10 hover:text-red-400 w-full transition-colors"
         >
           <LogOut size={20} />
           <span className="font-medium">Logout</span>

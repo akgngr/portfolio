@@ -10,6 +10,7 @@ interface Props {
     period: string;
     description: string[];
     logo?: string;
+    categoryName?: string;
   };
   index: number;
 }
@@ -29,7 +30,14 @@ const isEven = index % 2 === 0;
               <Briefcase size={20} />
           </div>
           <div>
-              <h4 class="text-lg font-bold text-white">{experience.position}</h4>
+              <div class="flex items-center gap-2 flex-wrap">
+                  <h4 class="text-lg font-bold text-white">{experience.position}</h4>
+                  {experience.categoryName && (
+                      <span class="text-[10px] font-bold text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded border border-emerald-400/20 uppercase tracking-wider">
+                          {experience.categoryName}
+                      </span>
+                  )}
+              </div>
               <span class="text-text-muted text-sm font-medium">{experience.company}</span>
           </div>
         </div>

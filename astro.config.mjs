@@ -16,15 +16,21 @@ export default defineConfig({
 
   vite: {
     plugins: [tailwindcss()],
-    resolve: {
-      alias: {
-        'react-dom/server': 'react-dom/server.edge'
+    server: {
+      watch: {
+        ignored: ['**/.wrangler/**']
       }
     },
     ssr: {
-      external: ['node:buffer']
+      external: ['node:buffer'],
+      // Force Vite to process Lexical for SSR/Hydration
+      noExternal: ['lexical', '@lexical/react', '@lexical/utils', '@lexical/rich-text', '@lexical/list', '@lexical/link', '@lexical/table', '@lexical/code', '@lexical/history', '@lexical/selection', '@lexical/markdown', '@lexical/clipboard', '@lexical/overflow', '@lexical/plain-text', '@lexical/text', '@lexical/file', '@lexical/hashtag', '@lexical/html']
+    },
+    optimizeDeps: {
+      // Do NOT include @lexical/react here as it lacks a root "." export
+      include: ['lexical']
     }
   },
 
-  integrations: [react()]
+  integrations: [react()],
 });

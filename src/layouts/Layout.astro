@@ -7,9 +7,11 @@ import '../styles/global.css';
 interface Props {
 	title: string;
     description?: string;
+    ogImage?: string;
+    keywords?: string;
 }
 
-const { title, description = "My Portfolio Site" } = Astro.props;
+const { title, description = "My Portfolio Site", ogImage, keywords } = Astro.props;
 ---
 
 <!doctype html>
@@ -20,6 +22,20 @@ const { title, description = "My Portfolio Site" } = Astro.props;
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
+        {keywords && <meta name="keywords" content={keywords} />}
+        
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        {ogImage && <meta property="og:image" content={ogImage} />}
+
+        {/* Twitter */}
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:title" content={title} />
+        <meta property="twitter:description" content={description} />
+        {ogImage && <meta property="twitter:image" content={ogImage} />}
+
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 		<title>{title} | DevPortfolio</title>
 	</head>

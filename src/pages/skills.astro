@@ -3,31 +3,27 @@
 import Layout from '../layouts/Layout.astro';
 import SectionTitle from '../components/ui/SectionTitle.astro';
 import ProficiencyBar from '../components/ui/ProficiencyBar.astro';
-import { Layout as LayoutIcon, Database, Cloud, Terminal } from 'lucide-react';
-import { getSkills } from '../lib/db';
+import { Layout as LayoutIcon, Database, Cloud, Terminal, Server, Code, PenTool, Wrench } from 'lucide-react';
+import { getSkills, getSkillCategories } from '../lib/db';
 
 const db = Astro.locals.runtime?.env?.DB;
 
 let skills: any[] = [];
+let skillCategories: any[] = [];
 
 if (db) {
   skills = await getSkills(db);
+  skillCategories = await getSkillCategories(db);
 }
 
-const categories = {
-    Frontend: skills.filter(s => s.category === 'Frontend'),
-    Backend: skills.filter(s => s.category === 'Backend'),
-    DevOps: skills.filter(s => s.category === 'DevOps'),
-    Tools: skills.filter(s => s.category === 'Tools'),
-};
-
-const getCategoryIcon = (cat: string) => {
-    switch(cat) {
-        case 'Frontend': return LayoutIcon;
-        case 'Backend': return Database;
-        case 'DevOps': return Cloud;
-        default: return Terminal;
-    }
+const getCategoryIcon = (catName: string) => {
+    const lowerCat = catName.toLowerCase();
+    if (lowerCat.includes('front')) return Code;
+    if (lowerCat.includes('back')) return Server;
+    if (lowerCat.includes('design')) return PenTool;
+    if (lowerCat.includes('devops')) return Cloud;
+    if (lowerCat.includes('tool')) return Wrench;
+    return Terminal;
 };
 ---
 
@@ -39,8 +35,10 @@ const getCategoryIcon = (cat: string) => {
     />
     
     <div class="grid grid-cols-1 gap-12">
-      {Object.entries(categories).map(([category, catSkills]) => {
-          const Icon = getCategoryIcon(category);
+      {skillCategories.map(category => {
+          const catSkills = skills.filter(s => s.categoryId === category.id || s.categoryName === category.name);
+          const Icon = getCategoryIcon(category.name);
+          
           return catSkills.length > 0 && (
               <div class="animate-in slide-in-from-bottom-4 duration-700">
                   <div class="flex items-center gap-3 mb-6 pb-2 border-b border-white/10">
@@ -48,7 +46,7 @@ const getCategoryIcon = (cat: string) => {
                           <Icon size={18} />
                       </span>
                       <h3 class="text-xl font-bold text-white uppercase tracking-wider font-mono">
-                          {category}
+                          {category.name}
                       </h3>
                   </div>
 

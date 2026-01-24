@@ -28,12 +28,17 @@ export type SkillRow = {
 export type BlogPostRow = {
   id: string;
   title: string;
+  slug: string;
   excerpt: string;
   content?: string;
   date: string;
   readTime?: string;
   imageUrl: string;
   category: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  focusKeyword?: string;
+  ogImageUrl?: string;
 };
 
 export type ExperienceRow = {

@@ -35,7 +35,9 @@ export const enhanceServiceDescription = async (currentDescription: string): Pro
   }
 };
 
-export const generateSkillsList = async (role: string): Promise<{name: string, category: string, proficiency: number}[]> => {
+export const generateSkillsList = async (role: string): Promise<{
+  [x: string]: any;name: string, category: string, proficiency: number
+}[]> => {
     if (!genAI) return [];
     
     try {
@@ -55,3 +57,38 @@ export const generateSkillsList = async (role: string): Promise<{name: string, c
         return [];
     }
 }
+
+export const enhanceContent = async (text: string, action: 'improve' | 'summarize' | 'expand' | 'tone-professional' | 'tone-friendly'): Promise<string> => {
+  if (!genAI) return text;
+
+  let prompt = "";
+  switch (action) {
+    case 'improve':
+      prompt = `Improve the following text for better clarity, grammar, and flow. Maintain the original meaning but make it more professional and engaging. Return ONLY the improved text:\n\n"${text}"`;
+      break;
+    case 'summarize':
+      prompt = `Summarize the following text into a concise version while keeping the core message. Return ONLY the summary:\n\n"${text}"`;
+      break;
+    case 'expand':
+      prompt = `Expand the following text with more details and context while maintaining the same message. Return ONLY the expanded version:\n\n"${text}"`;
+      break;
+    case 'tone-professional':
+      prompt = `Rewrite the following text in a professional, corporate tone. Return ONLY the rewritten text:\n\n"${text}"`;
+      break;
+    case 'tone-friendly':
+      prompt = `Rewrite the following text in a friendly, conversational tone. Return ONLY the rewritten text:\n\n"${text}"`;
+      break;
+    default:
+      prompt = `Improve the following text:\n\n"${text}"`;
+  }
+
+  try {
+    const model = genAI.getGenerativeModel({ model: modelName });
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    return response.text()?.trim().replace(/^"|"$/g, '') || text;
+  } catch (error) {
+    console.error("Gemini AI Error:", error);
+    return text;
+  }
+};
