@@ -15,7 +15,28 @@ export default defineConfig({
   }),
 
   vite: {
-    plugins: [tailwindcss()],
+    plugins: [
+      tailwindcss(),
+      {
+        name: 'polyfill-message-channel',
+        transform(code, id, options) {
+          // Prepend polyfill to the SSR entry point or chunks containing React DOM Server
+          if (options?.ssr && (id.includes('entry') || code.includes('requireReactDomServer') || code.includes('MessageChannel'))) {
+            return {
+              code: `if (typeof globalThis.MessageChannel === 'undefined') {
+                globalThis.MessageChannel = class MessageChannel {
+                  constructor() {
+                    this.port1 = { onmessage: null, postMessage: (msg) => { if (this.port2.onmessage) this.port2.onmessage({ data: msg }); } };
+                    this.port2 = { onmessage: null, postMessage: (msg) => { if (this.port1.onmessage) this.port1.onmessage({ data: msg }); } };
+                  }
+                };
+              }\n${code}`,
+              map: null
+            };
+          }
+        }
+      }
+    ],
     server: {
       watch: {
         ignored: ['**/.wrangler/**']
@@ -29,6 +50,9 @@ export default defineConfig({
     optimizeDeps: {
       // Do NOT include @lexical/react here as it lacks a root "." export
       include: ['lexical']
+    },
+    define: {
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
     }
   },
 
